@@ -14,4 +14,10 @@ class Audit extends Model
     protected $table = 'audit_trail';
 
     const UPDATED_AT = null;
+
+    protected $casts = [
+        'before_transaction'   => 'array',
+        'after_transaction'   => 'array',
+        'difference' => 'array'
+    ];
 }

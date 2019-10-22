@@ -26,11 +26,12 @@ class CreateAuditsTable extends Migration
 
             $table->text('before_transaction');
             $table->text('after_transaction');
-            $table->text('changes');
+            $table->text('difference');
 
             $table->text('token')->nullable();
             $table->ipAddress('ip')->nullable();
             $table->string('ua')->nullable();
+            $table->string('url')->nullable();
 
             $table->timestamp('created_at');
         });
