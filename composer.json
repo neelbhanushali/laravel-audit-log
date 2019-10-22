@@ -1,0 +1,13 @@
+{
+    "name": "neelbhanushali/laravel-audit-log",
+    "description": "Audit Log for Laravel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Neel Bhanushali",
+            "email": "neal.bhanushali@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
