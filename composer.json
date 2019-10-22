@@ -9,5 +9,17 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "NeelBhanushali\\LaravelAuditLog\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "NeelBhanushali\\LaravelAuditLog\\LaravelAuditLogServiceProvider"
+            ]
+        }
+    }
 }
