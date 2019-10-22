@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace NeelBhanushali\LaravelAuditLog\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
