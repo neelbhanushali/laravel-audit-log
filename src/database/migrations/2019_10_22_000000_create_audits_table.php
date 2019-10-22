@@ -14,7 +14,24 @@ class CreateAuditsTable extends Migration
     public function up()
     {
         Schema::create('audit_trail', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->string('entity_type');
+            $table->string('entity_id');
+
+            $table->string('related_type');
+            $table->string('related_id');
+            $table->string('relation');
+
+            $table->string('activity');
+            $table->string('user_id')->nullable();
+
+            $table->text('before_transaction');
+            $table->text('after_transaction');
+            $table->text('changes');
+
+            $table->text('token')->nullable();
+            $table->ipAddress('ip')->nullable();
+            $table->string('ua')->nullable();
+
             $table->timestamp('created_at');
         });
     }
