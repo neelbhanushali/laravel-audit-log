@@ -12,4 +12,6 @@ class Audit extends Model
      * @var string
      */
     protected $table = 'audit_trail';
+
+    const UPDATED_AT = null;
 }
