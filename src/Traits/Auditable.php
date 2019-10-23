@@ -30,8 +30,8 @@ trait Auditable
             }
 
             $audit_trail->before_transaction = [];
-            $audit_trail->after_transaction = self::getDataWithoutTimestamps($record, $record->attributes);
-            $audit_trail->difference = self::getDataWithoutTimestamps($record, $record->attributes);
+            $audit_trail->after_transaction = self::removeTimestamps($record, $record->attributes);
+            $audit_trail->difference = self::removeTimestamps($record, $record->attributes);
 
             $audit_trail->activity = 'create';
             $audit_trail->user_id = request()->user() ? request()->user()->id : null;
@@ -45,7 +45,7 @@ trait Auditable
         });
     }
 
-    protected static function getDataWithoutTimestamps($record, $data)
+    protected static function removeTimestamps($record, $data)
     {
         $except = [$record->getCreatedAtColumn(), $record->getUpdatedAtColumn()];
         if (method_exists($record, 'getDeletedAtColumn')) {
