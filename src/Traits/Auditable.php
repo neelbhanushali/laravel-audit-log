@@ -17,7 +17,8 @@ trait Auditable
             if (!defined(get_class($record) . '::AUDIT')) {
                 $audit = [
                     'relation' => 'self',
-                    'entity_id' => 'key'
+                    'entity_id' => 'key',
+                    'entity_type' => get_class($record)
                 ];
             } else {
                 $audit = $record::AUDIT;
@@ -25,14 +26,14 @@ trait Auditable
 
             $audit_trail = new Audit;
 
-            $audit_trail->entity_type = get_class($record);
+            $audit_trail->entity_type = self::getValue($record, $audit, 'entity_type');
             $audit_trail->entity_id = self::getValue($record, $audit, 'entity_id');
             $audit_trail->relation = $audit['relation'];
 
             if ($audit_trail->relation != 'self') {
-                $audit_trail->related_type =  $audit['entity_type'];
+                $audit_trail->related_type =  self::getValue($record, $audit, 'entity_type');
                 $audit_trail->related_id = self::getValue($record, $audit, 'entity_id');
-                $audit_trail->entity_type = $audit['parent_type'];
+                $audit_trail->entity_type = self::getValue($record, $audit, 'parent_type');
                 $audit_trail->entity_id = self::getValue($record, $audit, 'parent_id');
             }
 
