@@ -6,6 +6,11 @@ use NeelBhanushali\LaravelAuditLog\Models\Audit;
 
 trait Auditable
 {
+    public function audit()
+    {
+        return $this->morphMany(Audit::class, 'entity');
+    }
+
     protected static function bootAuditable()
     {
         static::created(function ($record) {
@@ -25,8 +30,10 @@ trait Auditable
             $audit_trail->relation = $audit['relation'];
 
             if ($audit_trail->relation != 'self') {
-                $audit_trail->related_type =  get_class($record);
-                $audit_trail->related_id = $audit['self_identifier'] == 'key' ? $record->getKey() : $record->{$audit['self_identifier']};
+                $audit_trail->related_type =  $audit['entity_type'];
+                $audit_trail->related_id = self::getValue($record, $audit, 'entity_id');
+                $audit_trail->entity_type = $audit['parent_type'];
+                $audit_trail->entity_id = self::getValue($record, $audit, 'parent_id');
             }
 
             $audit_trail->before_transaction = [];
