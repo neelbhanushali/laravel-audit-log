@@ -8,16 +8,23 @@ trait Auditable
 {
     protected static function bootAuditable()
     {
-        static::created(function($record) {
-            $audit = $record::AUDIT;
+        static::created(function ($record) {
+            if (!defined(get_class($record) . '::AUDIT')) {
+                $audit = [
+                    'relation' => 'self',
+                    'entity_identifier' => 'key'
+                ];
+            } else {
+                $audit = $record::AUDIT;
+            }
 
             $audit_trail = new Audit;
 
             $audit_trail->entity_type = get_class($record);
-            $audit_trail->entity_id = $audit['self_identifier'] == 'key' ? $record->getKey() : $record->{$audit['self_identifier']};
+            $audit_trail->entity_id = $audit['entity_identifier'] == 'key' ? $record->getKey() : $record->{$audit['entity_identifier']};
             $audit_trail->relation = $audit['relation'];
 
-            if($audit_trail->relation == 'self') {
+            if ($audit_trail->relation != 'self') {
                 $audit_trail->related_type =  get_class($record);
                 $audit_trail->related_id = $audit['self_identifier'] == 'key' ? $record->getKey() : $record->{$audit['self_identifier']};
             }
@@ -41,7 +48,7 @@ trait Auditable
     protected static function getDataWithoutTimestamps($record, $data)
     {
         $except = [$record->getCreatedAtColumn(), $record->getUpdatedAtColumn()];
-        if(method_exists($record, 'getDeletedAtColumn')) {
+        if (method_exists($record, 'getDeletedAtColumn')) {
             $except[] = $record->getDeletedAtColumn();
         }
 

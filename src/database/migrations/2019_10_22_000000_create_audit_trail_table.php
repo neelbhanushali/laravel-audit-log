@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAuditsTable extends Migration
+class CreateAuditTrailTable extends Migration
 {
     /**
      * Run the migrations.
@@ -17,9 +17,9 @@ class CreateAuditsTable extends Migration
             $table->string('entity_type');
             $table->string('entity_id');
 
-            $table->string('related_type');
-            $table->string('related_id');
-            $table->string('relation');
+            $table->string('related_type')->nullable();
+            $table->string('related_id')->nullable();
+            $table->string('relation')->default('self');
 
             $table->string('activity');
             $table->string('user_id')->nullable();
