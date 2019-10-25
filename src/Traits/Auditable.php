@@ -97,6 +97,52 @@ trait Auditable
 
             $audit_trail->save();
         });
+
+        static::deleted(function ($record) {
+            if (!defined(get_class($record) . '::AUDIT')) {
+                $audit = [
+                    'relation' => 'self',
+                    'entity_id' => 'key',
+                    'entity_type' => get_class($record)
+                ];
+            } else {
+                $audit = $record::AUDIT;
+            }
+
+            $audit_trail = new Audit;
+
+            $audit_trail->entity_type = self::getValue($record, $audit, 'entity_type');
+            $audit_trail->entity_id = self::getValue($record, $audit, 'entity_id');
+            $audit_trail->relation = $audit['relation'];
+
+            if ($audit_trail->relation != 'self') {
+                $audit_trail->related_type =  self::getValue($record, $audit, 'entity_type');
+                $audit_trail->related_id = self::getValue($record, $audit, 'entity_id');
+                $audit_trail->entity_type = self::getValue($record, $audit, 'parent_type');
+                $audit_trail->entity_id = self::getValue($record, $audit, 'parent_id');
+            }
+
+            $before_transaction = Audit::where([
+                'entity_type' => $audit_trail->entity_type,
+                'entity_id' => $audit_trail->entity_id,
+                'related_type' => $audit_trail->relation == 'self' ? null : $audit_trail->related_type,
+                'related_id' => $audit_trail->relation == 'self' ? null : $audit_trail->related_id,
+            ])->latest()->first();
+
+            $audit_trail->before_transaction = $before_transaction->after_transaction;
+            $audit_trail->after_transaction = self::removeTimestamps($record, $record->attributes);
+            $audit_trail->difference = [];
+
+            $audit_trail->activity = 'delete';
+            $audit_trail->user_id = request()->user() ? request()->user()->id : null;
+
+            $audit_trail->token = request()->bearerToken();
+            $audit_trail->ip = request()->ip();
+            $audit_trail->ua = request()->userAgent();
+            $audit_trail->url = url()->full();
+
+            $audit_trail->save();
+        });
     }
 
     protected static function removeTimestamps($record, $data)
