@@ -20,4 +20,14 @@ class Audit extends Model
         'after_transaction'   => 'array',
         'difference' => 'array'
     ];
+
+    public function entity()
+    {
+        return $this->morphTo();
+    }
+
+    public function related()
+    {
+        return $this->morphTo();
+    }
 }
